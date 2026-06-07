@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WAme - Chat Downloader</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-gradient: radial-gradient(circle at top left, #1a202c, #0d1117);
+      --card-bg: rgba(22, 27, 34, 0.85);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-main: #f0f6fc;
+      --text-muted: #8b949e;
+      --accent: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+      --accent-hover: linear-gradient(135deg, #00d8e4 0%, #3e98ee 100%);
+      --green-glow: #00a884;
+      --input-bg: #161b22;
+      --input-border: #30363d;
+      --input-focus: #58a6ff;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      width: 320px;
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      box-sizing: border-box;
+      overflow-x: hidden;
+    }
+
+    .container {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      min-height: 380px;
+    }
+
+    /* Header styling */
+    .header-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 12px;
+    }
+
+    .logo-container svg {
+      width: 28px;
+      height: 28px;
+      display: block;
+    }
+
+    .title-area h1 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      background: var(--accent);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .title-area p {
+      margin: 2px 0 0 0;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Section forms */
+    .section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Format selector pills */
+    .segment-selector {
+      display: flex;
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      border-radius: 8px;
+      padding: 2px;
+      gap: 2px;
+    }
+
+    .segment-option {
+      flex: 1;
+      text-align: center;
+    }
+
+    .segment-option input {
+      display: none;
+    }
+
+    .segment-label {
+      display: block;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: 6px;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+    }
+
+    .segment-option input:checked + .segment-label {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-main);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+
+    /* Custom drop down / option selector */
+    .select-dropdown {
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      color: var(--text-main);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      outline: none;
+      font-family: inherit;
+      width: 100%;
+      box-sizing: border-box;
+      transition: border-color 0.2s;
+    }
+
+    .select-dropdown:focus {
+      border-color: var(--input-focus);
+    }
+
+    /* Date picker inputs */
+    .date-range-container {
+      display: none;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+      animation: slideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .date-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .date-field label {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .date-input {
+      background: var(--input-bg);
+      border: 1px solid var(--input-border);
+      color: var(--text-main);
+      padding: 6px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      outline: none;
+      font-family: inherit;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .date-input:focus {
+      border-color: var(--input-focus);
+    }
+
+    /* Action button */
+    .download-btn {
+      background: var(--accent);
+      color: #0f1419;
+      border: none;
+      padding: 11px 20px;
+      border-radius: 8px;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 14px rgba(0, 242, 254, 0.2);
+      transition: all 0.2s ease;
+      width: 100%;
+      margin-top: 6px;
+    }
+
+    .download-btn:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(0, 242, 254, 0.3);
+    }
+
+    .download-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 8px rgba(0, 242, 254, 0.25);
+    }
+
+    .download-btn:disabled {
+      background: #30363d;
+      color: #8b949e;
+      cursor: not-allowed;
+      box-shadow: none;
+      transform: none;
+    }
+
+    /* Status text display */
+    .status-banner {
+      display: none;
+      font-size: 12px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      text-align: center;
+      font-weight: 500;
+      border: 1px solid transparent;
+      animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .status-info {
+      background: rgba(56, 139, 253, 0.1);
+      border-color: rgba(56, 139, 253, 0.2);
+      color: #58a6ff;
+    }
+
+    .status-success {
+      background: rgba(46, 160, 67, 0.1);
+      border-color: rgba(46, 160, 67, 0.2);
+      color: #3fb950;
+    }
+
+    .status-error {
+      background: rgba(248, 81, 73, 0.1);
+      border-color: rgba(248, 81, 73, 0.2);
+      color: #ff7b72;
+    }
+
+    /* Footer styling */
+    .footer-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--card-border);
+      padding-top: 12px;
+      margin-top: auto;
+      font-size: 11px;
+    }
+
+    .brand-link {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      color: var(--text-muted);
+      transition: color 0.2s ease;
+    }
+
+    .brand-link:hover {
+      color: var(--text-main);
+    }
+
+    .brand-logo svg,
+    .brand-logo img {
+      width: 16px;
+      height: 16px;
+      display: block;
+    }
+
+    .brand-name {
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+
+    .version-tag {
+      color: var(--text-muted);
+      font-family: monospace;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header-bar">
+      <div class="logo-container">
+        <!-- Modern dynamic SVG logo representing data download / messaging -->
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="2" width="20" height="20" rx="4" fill="#111B21" stroke="#00A884" stroke-width="1.5"/>
+          <!-- Tray -->
+          <path d="M6 17H18M6 17V14M18 17V14" stroke="#00F2FE" stroke-width="1.5" stroke-linecap="round"/>
+          <!-- W -->
+          <path d="M6 6L9 14L12 9L15 14L18 6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- Arrow -->
+          <path d="M12 9V14M12 14L10 12M12 14L14 12" stroke="#00F2FE" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="title-area">
+        <h1>WAme</h1>
+        <p>WhatsApp Web Chat Downloader</p>
+      </div>
+    </div>
+
+    <!-- Export format selector -->
+    <div class="form-group">
+      <div class="section-title">Format</div>
+      <div class="segment-selector">
+        <div class="segment-option">
+          <input type="radio" name="format" id="fmt-txt" value="txt" checked>
+          <label class="segment-label" for="fmt-txt">Plain Text (.txt)</label>
+        </div>
+        <div class="segment-option">
+          <input type="radio" name="format" id="fmt-csv" value="csv">
+          <label class="segment-label" for="fmt-csv">Structured (.csv)</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scroll scope selector -->
+    <div class="form-group">
+      <div class="section-title">Download Depth</div>
+      <select class="select-dropdown" id="limit-type">
+        <option value="none">Current Screen View (Quick)</option>
+        <option value="date">Date Range (Auto-Scroll)</option>
+        <option value="all">Complete Chat History (Auto-Scroll)</option>
+      </select>
+
+      <!-- Conditionally revealed date picking container -->
+      <div class="date-range-container" id="date-picker-area">
+        <div class="date-field">
+          <label for="from-date">From Date</label>
+          <input type="date" class="date-input" id="from-date">
+        </div>
+        <div class="date-field">
+          <label for="to-date">To Date</label>
+          <input type="date" class="date-input" id="to-date">
+        </div>
+      </div>
+    </div>
+
+    <!-- Status banner -->
+    <div class="status-banner" id="status-display"></div>
+
+    <!-- Download Trigger -->
+    <button class="download-btn" id="btn-download">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+      </svg>
+      Download Chat
+    </button>
+
+    <!-- Footer with BERVOS branding -->
+    <div class="footer-bar">
+      <a href="https://bervos.org" target="_blank" rel="noopener noreferrer" class="brand-link">
+        <div class="brand-logo">
+          <img src="icons/bervos-logo-16.png" alt="BERVOS Logo" />
+        </div>
+        <span class="brand-name">Built by BERVOS</span>
+      </a>
+      <div class="version-tag" id="plugin-version">v0.0.1</div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
