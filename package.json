@@ -1,0 +1,10 @@
+{
+  "name": "wame",
+  "private": true,
+  "version": "0.0.19",
+  "description": "WAme - WhatsApp Web Chat Downloader (Chrome Extension). Dev-only package for tests; the extension itself has no build step.",
+  "scripts": {
+    "test": "node --test test/dates.test.js",
+    "test:timezones": "TZ=UTC node --test test/dates.test.js && TZ=America/Caracas node --test test/dates.test.js && TZ=America/Los_Angeles node --test test/dates.test.js && TZ=Australia/Sydney node --test test/dates.test.js"
+  }
+}
