@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "WAme - Chat Downloader",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "Seamlessly download your active WhatsApp Web chat history as TXT or CSV.",
   "permissions": [
     "activeTab",
@@ -22,6 +22,7 @@
         "https://web.whatsapp.com/*"
       ],
       "js": [
+        "lib/dates.js",
         "content.js"
       ],
       "run_at": "document_idle"
@@ -51,3 +52,4 @@
     }
   ]
 }
+

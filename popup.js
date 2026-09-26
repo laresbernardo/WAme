@@ -23,8 +23,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(today.getDate() - 7);
 
-  fromDateInput.value = sevenDaysAgo.toISOString().split("T")[0];
-  toDateInput.value = today.toISOString().split("T")[0];
+  // Format defaults as local calendar days; toISOString() is UTC and can shift
+  // the day depending on the user's timezone.
+  fromDateInput.value = wameToLocalISODate(sevenDaysAgo);
+  toDateInput.value = wameToLocalISODate(today);
 
   // 3. Conditional Date Range View rendering
   limitTypeSelect.addEventListener("change", () => {
@@ -157,3 +159,4 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Fail silently in case tabs cannot be queried on startup
   }
 });
+

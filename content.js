@@ -981,8 +981,10 @@ async function executeDownload(options) {
   let noChangeCount = 0;
   let previousOldestMsgSig = '';
   
-  const fromDate = options.fromDate ? new Date(options.fromDate) : null;
-  const toDate = options.toDate ? new Date(options.toDate) : null;
+  // Parse picker values ("YYYY-MM-DD") as local calendar days; `new Date(str)`
+  // would parse them as midnight UTC and shift the range by timezone.
+  const fromDate = options.fromDate ? wameParseLocalDate(options.fromDate) : null;
+  const toDate = options.toDate ? wameParseLocalDate(options.toDate) : null;
 
   // Set up message accumulator to combat React list virtualization DOM-scrubbing
   let accumulatedMessages = [];
@@ -1784,3 +1786,4 @@ window.wameObserver.observe(document.body, {
 // Run initial check
 checkAndInjectButton();
 })();
+
